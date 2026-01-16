@@ -1,41 +1,50 @@
-"use client";
+useEffect(() => {
+  try {
+    console.log("Попытка инициализации TMA...");
 
-import { useEffect } from "react";
-import { init } from "@tma.js/sdk";
-import "./globals.css";
+    init();
 
-export default function ClientLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  useEffect(() => {
-    try {
-      // Инициализация TMA SDK
-      init();
+    const checkTMA = () => {
+      console.log("Проверка Telegram.WebApp...");
+      if (window.Telegram?.WebApp) {
+        const tg = window.Telegram.WebApp;
+        console.log("WebApp найден! Версия:", tg.version || "неизвестна");
+        console.log("Пользователь:", tg.initDataUnsafe?.user);
 
-      // Проверяем наличие WebApp с небольшой задержкой
-      const checkTMA = () => {
-        if (window.Telegram?.WebApp) {
-          const tg = window.Telegram.WebApp;
+        tg.ready();
+        console.log("Вызван tg.ready()");
 
-          tg.ready();     // сообщает Telegram, что приложение готово
-          tg.expand();    // разворачивает на весь экран
+        tg.expand();
+        console.log("Вызван tg.expand()");
 
-          console.log("Telegram WebApp инициализирован успешно");
-          console.log("Пользователь:", tg.initDataUnsafe?.user);
-        } else {
-          // Повторяем попытку через 100 мс
-          setTimeout(checkTMA, 100);
-        }
-      };
+        tg.MainButton.setParams({
+          text: "Купить подписку 750 ⭐",
+          color: "#00f9ff",
+          text_color: "#000000",
+        });
+        tg.MainButton.show();
+        console.log("MainButton показан");
 
-      checkTMA();
+        tg.MainButton.onClick(() => {
+          console.log("MainButton нажат!");
+          alert("Оплата запущена (тест)");
+        });
 
-    } catch (err) {
-      console.error("Ошибка инициализации TMA:", err);
-    }
-  }, []);
+        tg.BackButton.show();
+        console.log("BackButton показан");
 
-  return <>{children}</>;
-}
+        tg.BackButton.onClick(() => {
+          console.log("BackButton нажат → закрытие");
+          tg.close();
+        });
+      } else {
+        console.log("WebApp ещё не доступен, ждём...");
+        setTimeout(checkTMA, 200); // повторяем каждые 200 мс
+      }
+    };
+
+    checkTMA();
+  } catch (err) {
+    console.error("Критическая ошибка TMA:", err);
+  }
+}, []);
