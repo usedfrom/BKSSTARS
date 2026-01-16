@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0f0f1a;
+  --card: #1a1b2e;
+  --neon-cyan: #00f9ff;
+  --neon-purple: #c300ff;
+  --text: #e0e0ff;
+  --text-muted: #a0a0cc;
+}
+
+body {
+  @apply bg-[var(--bg)] text-[var(--text)] min-h-screen font-sans antialiased;
+  margin: 0;
+  padding: 0;
+}
+
+.neon-btn {
+  @apply px-6 py-4 rounded-3xl font-medium text-lg tracking-wide
+         bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)]
+         text-black hover:brightness-125 transition-all duration-300
+         shadow-[0_0_20px_rgba(0,249,255,0.6),0_0_40px_rgba(195,0,255,0.4)]
+         active:scale-95;
+}
+
+.card {
+  @apply bg-[var(--card)] rounded-3xl p-6 border border-[var(--neon-cyan)] 
+         shadow-[0_0_25px_rgba(195,0,255,0.18)]
+         backdrop-blur-sm;
+  border-opacity: 0.2; /* ← opacity вынесена отдельно, Tailwind это понимает */
+}
+
+.neon-glow {
+  text-shadow: 0 0 10px rgba(0, 249, 255, 0.7), 0 0 20px rgba(195, 0, 255, 0.5);
+}
