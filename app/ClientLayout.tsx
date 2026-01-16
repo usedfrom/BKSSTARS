@@ -1,50 +1,42 @@
-useEffect(() => {
-  try {
-    console.log("Попытка инициализации TMA...");
+"use client";
 
-    init();
+import { useEffect } from "react";
+import { init } from "@tma.js/sdk";
+import "./globals.css";
 
-    const checkTMA = () => {
-      console.log("Проверка Telegram.WebApp...");
-      if (window.Telegram?.WebApp) {
-        const tg = window.Telegram.WebApp;
-        console.log("WebApp найден! Версия:", tg.version || "неизвестна");
-        console.log("Пользователь:", tg.initDataUnsafe?.user);
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    try {
+      console.log("Начало инициализации TMA SDK");
 
-        tg.ready();
-        console.log("Вызван tg.ready()");
+      init();
 
-        tg.expand();
-        console.log("Вызван tg.expand()");
+      const checkTMA = () => {
+        if (window.Telegram?.WebApp) {
+          const tg = window.Telegram.WebApp;
 
-        tg.MainButton.setParams({
-          text: "Купить подписку 750 ⭐",
-          color: "#00f9ff",
-          text_color: "#000000",
-        });
-        tg.MainButton.show();
-        console.log("MainButton показан");
+          console.log("Telegram.WebApp найден");
+          tg.ready();
+          console.log("Вызван tg.ready()");
+          tg.expand();
+          console.log("Вызван tg.expand()");
 
-        tg.MainButton.onClick(() => {
-          console.log("MainButton нажат!");
-          alert("Оплата запущена (тест)");
-        });
+          console.log("InitDataUnsafe:", tg.initDataUnsafe);
+        } else {
+          console.log("Telegram.WebApp ещё не доступен, ждём...");
+          setTimeout(checkTMA, 200);
+        }
+      };
 
-        tg.BackButton.show();
-        console.log("BackButton показан");
+      checkTMA();
+    } catch (err) {
+      console.error("Ошибка инициализации TMA:", err);
+    }
+  }, []);
 
-        tg.BackButton.onClick(() => {
-          console.log("BackButton нажат → закрытие");
-          tg.close();
-        });
-      } else {
-        console.log("WebApp ещё не доступен, ждём...");
-        setTimeout(checkTMA, 200); // повторяем каждые 200 мс
-      }
-    };
-
-    checkTMA();
-  } catch (err) {
-    console.error("Критическая ошибка TMA:", err);
-  }
-}, []);
+  return <>{children}</>;
+}
