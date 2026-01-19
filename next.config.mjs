@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Отключаем SSR для всех страниц (чтобы TMA SDK работал только на клиенте)
-  experimental: {
-    serverComponentsExternalPackages: ['@tma.js/sdk'],
+  // Самое главное — экспортируем как статический сайт
+  output: 'export',
+  // Отключаем изображение-оптимизацию (не нужна для статического сайта)
+  images: {
+    unoptimized: true,
   },
-  // Делаем все страницы динамическими
-  output: 'standalone',
-  // Отключаем статическую генерацию
-  generateStaticParams: false,
+  // Если используешь trailingSlash — включи (для Vercel иногда полезно)
+  trailingSlash: true,
 };
 
 export default nextConfig;
