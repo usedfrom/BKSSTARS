@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [tgUser, setTgUser] = useState<any>(null);
-  const [balance, setBalance] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
+  const [balance] = useState<number>(0);
+  const [tmaReady, setTmaReady] = useState(false);
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
@@ -14,17 +14,12 @@ export default function Home() {
       tg.ready();
       tg.expand();
 
-      // Получаем пользователя и данные
       const user = tg.initDataUnsafe?.user;
       if (user) {
         setTgUser(user);
       }
 
-      // Показываем баланс и статус (заглушка, можно запросить у бота позже)
-      // В реальном проекте здесь можно запросить баланс через sendData("get_balance")
-      setBalance(0); // заменить на реальный запрос
-
-      // Настраиваем нижнюю кнопку Telegram
+      // Настраиваем кнопки Telegram
       tg.MainButton.setParams({
         text: "Купить подписку 750 ⭐",
         color: "#00f9ff",
@@ -34,30 +29,24 @@ export default function Home() {
 
       tg.MainButton.onClick(() => {
         tg.sendData("buy_full");
-        tg.showAlert("Запрос на покупку отправлен. Ожидайте ответа бота.");
       });
 
       tg.BackButton.show();
       tg.BackButton.onClick(() => tg.close());
 
-      setLoading(false);
-    } else {
-      setLoading(false);
+      setTmaReady(true);
     }
   }, []);
 
   const sendCommand = (command: string) => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.sendData(command);
-      window.Telegram.WebApp.showAlert(`Команда "${command}" отправлена боту`);
+    const tg = window.Telegram?.WebApp;
+    if (tg && tmaReady) {
+      tg.sendData(command);
+      tg.showAlert(`Команда "${command}" отправлена`);
     } else {
-      alert("Mini App не запущен внутри Telegram");
+      alert("Mini App ещё не готов или не запущен в Telegram");
     }
   };
-
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-[var(--neon-cyan)]">Загрузка...</div>;
-  }
 
   return (
     <div className="min-h-screen flex flex-col p-5 pb-24">
