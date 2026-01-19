@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [tgUser, setTgUser] = useState<any>(null);
-  const [balance, setBalance] = useState<number>(0);
+  const [balance] = useState<number>(0);
   const [tmaReady, setTmaReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
